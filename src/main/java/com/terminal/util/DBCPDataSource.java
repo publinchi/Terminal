@@ -1,3 +1,5 @@
+package com.terminal.util;
+
 import org.apache.commons.dbcp.BasicDataSource;
 
 import java.sql.Connection;
@@ -8,7 +10,7 @@ public class DBCPDataSource {
 
     static {
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setUrl("jdbc:mysql://localhost/Encargo");
+        ds.setUrl("jdbc:mysql://localhost/com.terminal.dto.Encargo");
         ds.setUsername("root");
         ds.setPassword("superroot");
         ds.setMinIdle(5);

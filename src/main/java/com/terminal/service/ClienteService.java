@@ -1,3 +1,11 @@
+package com.terminal.service;
+
+import com.terminal.dto.Cliente;
+import com.terminal.dto.TipoIdentificacion;
+import com.terminal.exception.EmptyField;
+import com.terminal.util.DBCPDataSource;
+import com.terminal.view.Terminal;
+
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,3 +1,8 @@
+package com.terminal.dto;
+
+import com.terminal.dto.Cliente;
+import com.terminal.dto.TipoEncargo;
+
 import java.io.Serializable;
 import java.util.Date;
 

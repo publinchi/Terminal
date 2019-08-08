@@ -1,6 +1,16 @@
-    import com.google.zxing.WriterException;
+package com.terminal.service;
 
-    import javax.imageio.ImageIO;
+import com.google.zxing.WriterException;
+    import com.terminal.dto.Cliente;
+import com.terminal.dto.Encargo;
+import com.terminal.dto.TipoEncargo;
+    import com.terminal.exception.EmptyField;
+import com.terminal.util.DBCPDataSource;
+import com.terminal.util.QRCodeGenerator;
+import com.terminal.util.QrCapture;
+import com.terminal.view.Terminal;
+
+import javax.imageio.ImageIO;
     import javax.print.*;
     import javax.swing.*;
     import java.awt.*;
@@ -55,7 +65,7 @@
                 if(terminal.getSaldoField().getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Operación fallida, saldo no calculado!!!", "Falla",
                     JOptionPane.ERROR_MESSAGE);
-                    throw new EmptyField();
+                    throw new com.terminal.exception.EmptyField();
                 }
                 */
 
@@ -294,7 +304,7 @@
         }
 
         private static Double calcularSaldo(Terminal terminal) {
-            //String nombre = ((TipoEncargo)terminal.getTipoComboBox().getSelectedItem()).getNombre();
+            //String nombre = ((com.terminal.dto.TipoEncargo)terminal.getTipoComboBox().getSelectedItem()).getNombre();
             Double valor = ((TipoEncargo)terminal.getTipoComboBox().getSelectedItem()).getValor();
             Integer cantidad = (Integer) terminal.getCantidadSpinner().getValue();
             Double porcentaje;

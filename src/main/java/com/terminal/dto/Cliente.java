@@ -1,3 +1,5 @@
+package com.terminal.dto;
+
 import java.io.Serializable;
 
 public class Cliente implements Serializable {

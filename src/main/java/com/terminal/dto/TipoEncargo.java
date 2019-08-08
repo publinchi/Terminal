@@ -1,14 +1,18 @@
-public class TipoIdentificacion {
+package com.terminal.dto;
+
+public class TipoEncargo {
     private Integer id;
     private String nombre;
+    private Double valor;
 
-    public TipoIdentificacion(Integer id) {
+    public TipoEncargo(Integer id) {
         this.id = id;
     }
 
-    public TipoIdentificacion(Integer id, String nombre) {
+    public TipoEncargo(Integer id, String nombre, Double valor) {
         this.id = id;
         this.nombre = nombre;
+        this.valor = valor;
     }
 
     public Integer getId() {
@@ -27,8 +31,15 @@ public class TipoIdentificacion {
         this.nombre = nombre;
     }
 
-    public String toString() {
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
+    }
+
+    public String toString () {
         return this.nombre;
     }
 }
-
