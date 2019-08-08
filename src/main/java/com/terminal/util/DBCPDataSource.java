@@ -10,7 +10,7 @@ public class DBCPDataSource {
 
     static {
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setUrl("jdbc:mysql://localhost/com.terminal.dto.Encargo");
+        ds.setUrl("jdbc:mysql://localhost/Encargo");
         ds.setUsername("root");
         ds.setPassword("superroot");
         ds.setMinIdle(5);
