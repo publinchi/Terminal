@@ -49,6 +49,7 @@
                       <component id="10dae" class="javax.swing.JTable" binding="clienteTable" default-binding="true">
                         <constraints/>
                         <properties>
+                          <autoCreateRowSorter value="false"/>
                           <cellSelectionEnabled value="false"/>
                           <enabled value="true"/>
                           <fillsViewportHeight value="false"/>
