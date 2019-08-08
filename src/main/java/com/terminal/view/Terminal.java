@@ -436,7 +436,7 @@ public class Terminal {
         detalleArea = new JTextArea();
         panel2.add(detalleArea, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         final JLabel label7 = new JLabel();
-        label7.setText("com.terminal.dto.Cliente:");
+        label7.setText("Cliente:");
         panel2.add(label7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         clienteField = new JTextField();
         clienteField.setEditable(false);
@@ -493,7 +493,7 @@ public class Terminal {
         iClienteField.setEditable(false);
         panel3.add(iClienteField, new GridConstraints(1, 3, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label15 = new JLabel();
-        label15.setText("com.terminal.dto.Cliente:");
+        label15.setText("Cliente:");
         panel3.add(label15, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         iDetalleArea = new JTextArea();
         iDetalleArea.setEditable(false);
