@@ -7,4 +7,4 @@ cd Terminal
 git pull
 mvn clean package install -DskipTests=true
 cp Terminal.desktop ~/Escritorio
-sed -i 's+/$HOME+'"$HOME"'+g' ~/Escritorio/Terminal.desktop
+sed -i 's+HOME+'"$HOME"'+g' ${HOME}/Escritorio/Terminal.desktop
