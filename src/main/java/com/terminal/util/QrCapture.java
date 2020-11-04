@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
+import java.util.Objects;
 import java.util.concurrent.Exchanger;
 
 
@@ -23,7 +24,7 @@ public class QrCapture extends JFrame implements Closeable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Webcam webcam = null;
+	private Webcam webcam;
 	private BufferedImage image = null;
 	private Result result = null;
 	private Exchanger<String> exchanger = new Exchanger<String>();
@@ -44,7 +45,22 @@ public class QrCapture extends JFrame implements Closeable {
 			}
 		});
 
-		webcam = Webcam.getDefault();
+		java.util.List<Webcam> webcamList = Webcam.getWebcams();
+
+		String webcamName = "Integrated_Webcam_HD: Integrate /dev/video0";
+
+		for (Webcam webcam : webcamList) {
+			if(webcam.getName().equals(webcamName)) {
+				this.webcam = webcam;
+				System.out.println("-> " + webcam.getName());
+			} else {
+				System.out.println(webcam.getName());
+			}
+		}
+
+		if(Objects.isNull(webcam))
+			webcam = Webcam.getDefault();
+
 		webcam.setViewSize(WebcamResolution.QVGA.getSize());
 		webcam.open();
 
@@ -53,13 +69,9 @@ public class QrCapture extends JFrame implements Closeable {
 		pack();
 		setVisible(true);
 
-		final Thread daemon = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (isVisible()) {
-					read();
-				}
+		final Thread daemon = new Thread(() -> {
+			while (isVisible()) {
+				read();
 			}
 		});
 		daemon.setDaemon(true);

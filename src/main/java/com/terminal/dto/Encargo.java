@@ -1,10 +1,9 @@
 package com.terminal.dto;
 
-import com.terminal.dto.Cliente;
-import com.terminal.dto.TipoEncargo;
-
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class Encargo implements Serializable {
     private Integer id;
@@ -15,6 +14,8 @@ public class Encargo implements Serializable {
     private TipoEncargo tipoEncargo;
     private Double abono;
     private Double saldo;
+    private Integer descuento;
+    private List<Equipaje> equipajes;
 
     public Encargo(){}
 
@@ -84,5 +85,21 @@ public class Encargo implements Serializable {
 
     public void setSaldo(Double saldo) {
         this.saldo = saldo;
+    }
+
+    public Integer getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(Integer descuento) {
+        this.descuento = descuento;
+    }
+
+    public List<Equipaje> getEquipajes() {
+        return equipajes;
+    }
+
+    public void setEquipajes(List<Equipaje> equipajes) {
+        this.equipajes = equipajes;
     }
 }

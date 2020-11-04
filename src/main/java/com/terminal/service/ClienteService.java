@@ -4,32 +4,30 @@ import com.terminal.dto.Cliente;
 import com.terminal.dto.TipoIdentificacion;
 import com.terminal.exception.EmptyField;
 import com.terminal.util.DBCPDataSource;
-import com.terminal.view.Terminal;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ClienteService {
 
-    public static void crearCliente(Terminal terminal) {
-        Cliente cliente = new Cliente();
-        cliente.setId(null);
-        cliente.setApellido(terminal.getApellidoField().getText());
-        cliente.setIdentificacion(terminal.getIdentificacionField().getText());
-        cliente.setNombre(terminal.getNombreField().getText());
-        cliente.setTipoIdentificacion(new TipoIdentificacion(((TipoIdentificacion)terminal.getTipoBox()
-                .getSelectedItem()).getId()));
-        cliente.setTelefono(terminal.getTelefonoField().getText());
+    public static void crearCliente(Cliente cliente) throws SQLException {
+        Cliente c = new Cliente();
+        c.setId(null);
+        c.setApellido(cliente.getApellido());
+        c.setIdentificacion(cliente.getIdentificacion());
+        c.setNombre(cliente.getNombre());
+        c.setTipoIdentificacion(cliente.getTipoIdentificacion());
+        c.setTelefono(cliente.getTelefono());
 
         Connection connection = null;
 
         try {
-            validarCliente(cliente);
+            //validarCliente(cliente);
 
             connection = DBCPDataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("insert into cliente " +
@@ -41,21 +39,6 @@ public class ClienteService {
             preparedStatement.setInt(5, cliente.getTipoIdentificacion().getId());
             preparedStatement.execute();
 
-            terminal.getNombreField().setText("");
-            terminal.getApellidoField().setText("");
-            terminal.getIdentificacionField().setText("");
-            terminal.getTipoBox().setSelectedIndex(0);
-            terminal.getTelefonoField().setText("");
-
-            clearTable(terminal);
-
-            JOptionPane.showMessageDialog(null, "Operación realizada correctamente",
-                    "Exito", JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (SQLException | EmptyField e) {
-            System.err.println(e);
-            JOptionPane.showMessageDialog(null, "Operación fallida!!!",
-                    "Falla", JOptionPane.ERROR_MESSAGE);
         } finally {
             try {
                 if(connection != null && !connection.isClosed())
@@ -66,28 +49,37 @@ public class ClienteService {
         }
     }
 
-    public static void buscarCliente(Terminal terminal) {
-        List<Cliente> clientes = new ArrayList<>();
+    public static Cliente buscarCliente(Integer id) throws SQLException {
+        List<Cliente> clientes = buscarClientes(null, id.toString());
+        return clientes.get(0);
+    }
 
+    public static Cliente buscarClientePorIdentificacion(String identificacion) throws SQLException {
         Cliente cliente = new Cliente();
-        cliente.setApellido(terminal.getApellidoField().getText());
-        cliente.setIdentificacion(terminal.getIdentificacionField().getText());
-        cliente.setNombre(terminal.getNombreField().getText());
-        cliente.setTipoIdentificacion(new TipoIdentificacion(((TipoIdentificacion)terminal.getTipoBox()
-                .getSelectedItem()).getId()));
-        cliente.setTelefono(terminal.getTelefonoField().getText());
 
         Connection connection = null;
 
         try {
             connection = DBCPDataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("select * from cliente where " +
-                    "nombre = ? or apellido = ? or identificacion = ? or telefono = ?");
-            preparedStatement.setString(1, cliente.getNombre());
-            preparedStatement.setString(2, cliente.getApellido());
-            preparedStatement.setString(3, cliente.getIdentificacion());
-            preparedStatement.setString(4, cliente.getTelefono());
+            PreparedStatement preparedStatement;
+
+            if(Objects.nonNull(identificacion)) {
+                if (identificacion.matches("[0-9]+")) {
+                    cliente.setIdentificacion(identificacion);
+                } else {
+                    return null;
+                }
+
+                preparedStatement = connection.prepareStatement("select * from cliente where " +
+                        "identificacion = ?");
+                preparedStatement.setInt(1, Integer.valueOf(identificacion));
+            } else {
+                return null;
+            }
+
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<Cliente> clientes = new ArrayList<>();
 
             while (resultSet.next()) {
                 Cliente c = new Cliente();
@@ -102,27 +94,10 @@ public class ClienteService {
                 clientes.add(c);
             }
 
-            clearTable(terminal);
+            if(clientes.size() == 0)
+                return null;
 
-            for (Cliente c : clientes) {
-                Object[] o = new Object[6];
-                o[0] = c.getId();
-                o[1] = c.getIdentificacion();
-                o[2] = c.getNombre();
-                o[3] = c.getApellido();
-                o[4] = c.getTelefono();
-                if(c.getTipoIdentificacion().getId() == 1)
-                    o[5] = "Cédula";
-                else if(c.getTipoIdentificacion().getId() == 2)
-                    o[5] = "Pasaporte";
-                terminal.getClienteModel().addRow(o);
-            }
-            JOptionPane.showMessageDialog(null, "Operación realizada correctamente "
-                    + clientes.size(), "Exito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            System.err.println(e);
-            JOptionPane.showMessageDialog(null, "Operación fallida!!!",
-                    "Falla", JOptionPane.ERROR_MESSAGE);
+            return clientes.get(0);
         } finally {
             try {
                 if(connection != null && !connection.isClosed())
@@ -133,30 +108,72 @@ public class ClienteService {
         }
     }
 
-    public static void eliminarCliente(Terminal terminal) {
+    public static List<Cliente> buscarClientes(String criteria, String... criterias) throws SQLException {
+        Cliente cliente = new Cliente();
+
+        Connection connection = null;
+
+        try {
+            connection = DBCPDataSource.getConnection();
+            PreparedStatement preparedStatement;
+
+            if(Objects.nonNull(criteria)) {
+                if (criteria.matches("[0-9]+")) {
+                    cliente.setIdentificacion(criteria);
+                    cliente.setTelefono(criteria);
+                } else {
+                    cliente.setApellido(criteria);
+                    cliente.setNombre(criteria);
+                }
+
+                preparedStatement = connection.prepareStatement("select * from cliente where " +
+                        "nombre = ? or apellido = ? or identificacion = ? or telefono = ?");
+                preparedStatement.setString(1, cliente.getNombre());
+                preparedStatement.setString(2, cliente.getApellido());
+                preparedStatement.setString(3, cliente.getIdentificacion());
+                preparedStatement.setString(4, cliente.getTelefono());
+            } else {
+                preparedStatement = connection.prepareStatement("select * from cliente where " +
+                        "id = ?");
+                preparedStatement.setInt(1, Integer.valueOf(criterias[0]));
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<Cliente> clientes = new ArrayList<>();
+
+            while (resultSet.next()) {
+                Cliente c = new Cliente();
+
+                // Now we can fetch the data by column name, save and use them!
+                c.setId(resultSet.getInt("id"));
+                c.setNombre(resultSet.getString("nombre"));
+                c.setApellido(resultSet.getString("apellido"));
+                c.setIdentificacion(resultSet.getString("identificacion"));
+                c.setTelefono(resultSet.getString("telefono"));
+                c.setTipoIdentificacion(new TipoIdentificacion(resultSet.getInt("tipo_identificacion")));
+                clientes.add(c);
+            }
+
+            return clientes;
+        } finally {
+            try {
+                if(connection != null && !connection.isClosed())
+                    connection.close();
+            } catch (Exception e){
+                System.err.println(e);
+            }
+        }
+    }
+
+    public static void eliminarCliente(int id) throws SQLException {
         Connection connection = null;
 
         try {
             connection = DBCPDataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("delete from cliente where id = ?");
-            preparedStatement.setInt(1, Integer.valueOf(terminal.getClienteTable()
-                    .getValueAt(terminal.getClienteTable().getSelectedRow(), 0).toString()));
+            preparedStatement.setInt(1, id);
             preparedStatement.execute();
-
-            terminal.getiIdentificacionField().setText("");
-            terminal.getiNombreField().setText("");
-            terminal.getiApellidoField().setText("");
-            terminal.getiTelefonoField().setText("");
-            terminal.getiTipoField().setText("");
-
-            clearTable(terminal);
-
-            JOptionPane.showMessageDialog(null, "Operación realizada correctamente ",
-                    "Exito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            System.err.println(e);
-            JOptionPane.showMessageDialog(null, "Operación fallida!!!",
-                    "Falla", JOptionPane.ERROR_MESSAGE);
         } finally {
             try {
                 if(connection != null && !connection.isClosed())
@@ -167,35 +184,20 @@ public class ClienteService {
         }
     }
 
-    public static void editarCliente(Terminal terminal) {
+    public static void editarCliente(Cliente cliente) throws SQLException {
         Connection connection = null;
 
         try {
             connection = DBCPDataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("update cliente set " +
-                    "identificacion = ?, nombre = ?, apellido = ?, telefono = ? where id = ?");
-            preparedStatement.setString(1, terminal.getiIdentificacionField().getText());
-            preparedStatement.setString(2, terminal.getiNombreField().getText());
-            preparedStatement.setString(3, terminal.getiApellidoField().getText());
-            preparedStatement.setString(4, terminal.getiTelefonoField().getText());
-            preparedStatement.setInt(5, Integer.valueOf(terminal.getClienteTable()
-                    .getValueAt(terminal.getClienteTable().getSelectedRow(), 0).toString()));
+                    "identificacion = ?, nombre = ?, apellido = ?, telefono = ?, tipo_identificacion = ? where id = ?");
+            preparedStatement.setString(1, cliente.getIdentificacion());
+            preparedStatement.setString(2, cliente.getNombre());
+            preparedStatement.setString(3, cliente.getApellido());
+            preparedStatement.setString(4, cliente.getTelefono());
+            preparedStatement.setInt(5, cliente.getTipoIdentificacion().getId());
+            preparedStatement.setInt(6, cliente.getId());
             preparedStatement.execute();
-
-            terminal.getiIdentificacionField().setText("");
-            terminal.getiNombreField().setText("");
-            terminal.getiApellidoField().setText("");
-            terminal.getiTelefonoField().setText("");
-            terminal.getiTipoField().setText("");
-
-            clearTable(terminal);
-
-            JOptionPane.showMessageDialog(null, "Operación realizada correctamente ",
-                    "Exito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            System.err.println(e);
-            JOptionPane.showMessageDialog(null, "Operación fallida!!!",
-                    "Falla", JOptionPane.ERROR_MESSAGE);
         } finally {
             try {
                 if(connection != null && !connection.isClosed())
@@ -212,10 +214,6 @@ public class ClienteService {
                 || cliente.getIdentificacion().equals("")) {
             throw new EmptyField();
         }
-    }
-
-    private static void clearTable(Terminal terminal) {
-        terminal.getClienteModel().setRowCount(0);
     }
 }
 

@@ -1,6 +1,8 @@
 package com.terminal.dto;
 
-public class TipoEncargo {
+import java.io.Serializable;
+
+public class TipoEncargo implements Serializable {
     private Integer id;
     private String nombre;
     private Double valor;

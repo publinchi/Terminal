@@ -1,6 +1,8 @@
 package com.terminal.dto;
 
-public class TipoIdentificacion {
+import java.io.Serializable;
+
+public class TipoIdentificacion implements Serializable {
     private Integer id;
     private String nombre;
 
