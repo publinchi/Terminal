@@ -21,8 +21,6 @@ public class EquipajeService {
         Connection connection = null;
 
         try {
-            validarEquipaje(equipaje);
-
             connection = DBCPDataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("insert into equipaje (detalle, " +
                     "fecha_ingreso, encargo, tipo_encargo, valor) values (?, ?, ?, ?, ?)");
