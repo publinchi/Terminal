@@ -1,5 +1,7 @@
 #!/bin/bash
 
+docker start terminal-mariadb
+
 java -javaagent:$HOME/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-1/202.7660.26/lib/idea_rt.jar=44451:\
 $HOME/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-1/202.7660.26/bin \
 -Dfile.encoding=UTF-8 \
@@ -44,4 +46,4 @@ $HOME/.m2/repository/asm/asm-tree/3.0/asm-tree-3.0.jar:\
 $HOME/.m2/repository/asm/asm/3.0/asm-3.0.jar:\
 $HOME/.m2/repository/com/jgoodies/forms/1.1-preview/forms-1.1-preview.jar:\
 $HOME/.m2/repository/jdom/jdom/1.0/jdom-1.0.jar \
-com.terminal.view.MainGUI
+com.terminal.view.MainGUI &
