@@ -32,7 +32,7 @@ and returns the QR Code in the form of a byte array.
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(EncodeHintType.MARGIN, 0); /* default = 4 */
+        hints.put(EncodeHintType.MARGIN, 1); /* default = 4 */
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
 
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
